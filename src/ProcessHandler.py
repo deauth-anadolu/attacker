@@ -107,3 +107,8 @@ class SubProcess:
     def get_interface_mode_output():
         command = "iw dev | grep type"
         return SubProcess.run_command(command)
+    
+    @staticmethod
+    def drop_client(client_mac, ap_bssid, interface_name_monitor, number_of_packages):
+        command = f"aireplay-ng --deauth {number_of_packages} -a {ap_bssid} -c {client_mac} --ignore-negative-one {interface_name_monitor}"
+        return SubProcess.run_command(command)

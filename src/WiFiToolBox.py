@@ -29,8 +29,8 @@ class Scanner:
 
 class Dropper:
     @staticmethod
-    def drop_client(client_mac, ap_bssid, interface_name_monitor, number_of_packages):
-        return Aireplay.drop_client(client_mac, ap_bssid, interface_name_monitor, number_of_packages)
+    def drop_client(client_mac, ap_bssid, interface_name_monitor, number_of_packages, run_silent=False):
+        return Aireplay.drop_client(client_mac, ap_bssid, interface_name_monitor, number_of_packages, run_silent=False)
 
 
 class Cracker:
@@ -46,7 +46,7 @@ class Operator:
     def detect_clients(channel, bssid, interface_name_monitor, fname):
         Scanner.detect_clients(channel, bssid, interface_name_monitor, fname)
     @staticmethod
-    def drop_client(client_mac, ap_bssid, interface_name_monitor, number_of_packages):
-        Dropper.drop_client(client_mac, ap_bssid, interface_name_monitor, number_of_packages)
+    def drop_client(client_mac, ap_bssid, interface_name_monitor, number_of_packages, run_silent=False):
+        Dropper.drop_client(client_mac, ap_bssid, interface_name_monitor, number_of_packages, run_silent=False)
 
     

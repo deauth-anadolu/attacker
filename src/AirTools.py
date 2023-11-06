@@ -1,4 +1,4 @@
-from ProcessHandler import XtermTerminal as xt, DefaultTerminal as dt
+from ProcessHandler import XtermTerminal as xt, DefaultTerminal as dt, SubProcess as sp
 
 
 class Airmon:
@@ -20,6 +20,9 @@ class Airodump:
 
 class Aireplay:
     @staticmethod
-    def drop_client(client_mac, ap_bssid, interface_name_monitor, number_of_packages):
-        return xt.drop_client(client_mac, ap_bssid, interface_name_monitor, number_of_packages)
+    def drop_client(client_mac, ap_bssid, interface_name_monitor, number_of_packages, run_silent=False):
+        if run_silent:
+            return sp.drop_client(client_mac, ap_bssid, interface_name_monitor, number_of_packages)
+        else:
+            return xt.drop_client(client_mac, ap_bssid, interface_name_monitor, number_of_packages)
 
