@@ -68,7 +68,7 @@ def initialize(iface):
     iface.switch_to_monitor_mode()
 
 @output_standart
-def list_avaliable_aps(detected_aps):
+def list_avliable_aps(detected_aps):
     print("\n\nAvaliable access points to attack: ")
     print("ESSID\t\t\t\t\tBSSID\t\t\t\t\tChannel\t\t\t\t\tSignal Level")
     print(140 * "_")
@@ -77,8 +77,8 @@ def list_avaliable_aps(detected_aps):
 
 @output_standart
 def choose_target_ap(detected_aps):
-    target_bssid = input("Choose target BSSID (None = all targets):")
-    if target_bssid != "None":
+    target_bssid = input("Choose target BSSID (Default = all targets):")
+    if target_bssid != "":
         detected_aps = [ap for ap in detected_aps if ap.bssid == target_bssid]
 
     return detected_aps

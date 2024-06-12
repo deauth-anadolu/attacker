@@ -21,7 +21,10 @@ class AccessPoint:
 
 
     @classmethod
-    def from_csv(cls, csv_file, sort_by_signal_level=False):
+    def from_csv(cls, csv_file, sort_by_signal_level=False, sort_by_channel=False):
+        if sort_by_signal_level and sort_by_channel:
+            raise ValueError("sort_by_signal_level and sort_by_channel can't be active simultaneousy.")
+        
         aps = []
 
         try:
@@ -30,20 +33,21 @@ class AccessPoint:
 
             # Sütunları seçerek Nesne listesi oluştur
             for index, row in df.iterrows():
-                if "BSSID" in row and "ESSID" in row and "Channel" in row and "BestSignal"in row:
+                if "BSSID" in row and "ESSID" in row and "Channel" in row and "BestQuality"in row:
                     bssid = row.get("BSSID")
                     essid = row.get("ESSID")
                     channel = row.get("Channel")
-                    best_signal = row.get("BestSignal")
-                    print(best_signal)
+                    best_signal = row.get("BestQuality")
                     
                     ap = cls(bssid, essid, int(channel), int(best_signal))
                     aps.append(ap)
 
                     if sort_by_signal_level:
                         aps = AccessPoint._sort_by_signal_level(aps)
+                    elif sort_by_channel:
+                        aps = AccessPoint._sort_by_channel(aps)
                 else:
-                    print("BSSID, ESSID veya Channel eksik bir satır atlandı.")
+                    print("BSSID, ESSID, Channel veya BestQuality eksik bir satır atlandı.")
         except pd.errors.ParserError:
             print("Parser error occurred. Skipping problematic lines.")
 
@@ -57,4 +61,12 @@ class AccessPoint:
             return ap.signal_level
         
         return sorted(aps, reverse=True, key=__get_signal_level)
+    
+    @classmethod
+    def _sort_by_channel(cls, aps):
+        def __get_channel(ap):
+            return ap.channel
+        
+        return sorted(aps, reverse=True, key=__get_channel)
+
         

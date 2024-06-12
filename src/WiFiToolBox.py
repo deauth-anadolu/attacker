@@ -16,6 +16,10 @@ class InterfaceManager:
     @staticmethod
     def interface_up(name):
         return sp.interface_up(name)
+
+    @staticmethod
+    def set_active_channel(interface_name, channel):
+        return sp.set_active_channel(interface_name, channel)
     
     
 class Scanner:

@@ -15,7 +15,7 @@ class DefaultTerminal:
 
     @staticmethod
     def airmon_start(interface_name):
-        command = f"airmon-ng start {interface_name}"
+        command = f"airmon-ng start {interface_name} 11"
         return DefaultTerminal.run_command(command)
 
     @staticmethod
@@ -32,9 +32,9 @@ class DefaultTerminal:
 
 class XtermTerminal:
     @staticmethod
-    def run_command(command, timeout=True):
+    def run_command(command, timeout=True, time=10):
         _timeout = ""
-        if timeout: _timeout = "timeout -s 9 10"
+        if timeout: _timeout = f"timeout -s 9 {time}"
         try:
             xterm_command = f"xterm -e {_timeout} {command}"
             result = os.system(xterm_command)
@@ -53,11 +53,11 @@ class XtermTerminal:
     @staticmethod
     def detect_clients(channel: int, bssid: str, interface_name_monitor: str, fname: str):
         command = f"airodump-ng -c {channel} --bssid {bssid} -w {fname} --output-format csv {interface_name_monitor}"
-        return XtermTerminal.run_command(command)
+        return XtermTerminal.run_command(command, timeout=True, time=30)
 
     @staticmethod
     def drop_client(client_mac, ap_bssid, interface_name_monitor, number_of_packages):
-        command = f"aireplay-ng --deauth {number_of_packages} -a {ap_bssid} -c {client_mac} --ignore-negative-one {interface_name_monitor}"
+        command = f"aireplay-ng -0 {number_of_packages} -a {ap_bssid} -c {client_mac} --ignore-negative-one {interface_name_monitor}"
         return XtermTerminal.run_command(command, timeout=False)
 
 
@@ -109,6 +109,18 @@ class SubProcess:
         return SubProcess.run_command(command)
     
     @staticmethod
+    def get_active_channel(interface_name):
+        command = f"iw dev {interface_name} info | grep 'channel' | " + "awk '{print $2}'"
+        return SubProcess.run_command(command)
+    
+    @staticmethod
+    def set_active_channel(interface_name, channel):
+        command = f"iwconfig {interface_name} channel {str(channel)}"
+        return SubProcess.run_command(command)
+    
+    
+    
+    @staticmethod
     def drop_client(client_mac, ap_bssid, interface_name_monitor, number_of_packages):
-        command = f"aireplay-ng --deauth {number_of_packages} -a {ap_bssid} -c {client_mac} --ignore-negative-one {interface_name_monitor}"
+        command = f"aireplay-ng -0 {number_of_packages} -a {ap_bssid} -c {client_mac} --ignore-negative-one {interface_name_monitor}"
         return SubProcess.run_command(command)

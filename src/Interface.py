@@ -6,12 +6,14 @@ import time, re
 class Interface:
     _name: str
     _mode: str
+    _channel: str
 
     @property
     def name(self):
         _, output = sp.get_interface_output()
         interface_name = output.split("\n")[0]  # Searching for interface name
         interface_name = interface_name[11:]  # Getting the name only
+        self._name = interface_name
         return str(interface_name)
     @name.setter
     def name(self, value):
@@ -23,12 +25,27 @@ class Interface:
         type_of_card = output.split("\n")[0]
         type_of_card = type_of_card[7:]
         print("--> Network Adapter Mode: ", type_of_card)
-
+        self.mode = type_of_card
         return type_of_card
     @mode.setter
     def mode(self, value):
         self._mode = value
 
+    @property
+    def channel(self):
+        _, output = sp.get_active_channel(self.name)
+        channel_num = output.split("\n")[0]
+        print("--> Active Channel: ", channel_num)
+        self.channel = channel_num
+        return channel_num
+    @channel.setter
+    def channel(self, value):
+        self._channel = value
+    
+    def set_active_channel(self, channel):
+        return IM.set_active_channel(self.name, channel)
+        
+        
     def down(self):
         return IM.interface_down(self.name)
     def up(self):
